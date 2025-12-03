@@ -1,0 +1,18 @@
+varbs greeting = "Hello";
+varbs name = "World";
+
+writeIt greeting + ", " + name + "!";
+
+varbs x = 10;
+varbs y = 20;
+
+{
+    varbs x = 5;
+    writeIt "Inner x: " + x;
+    writeIt "Outer y: " + y;
+}
+
+writeIt "Outer x: " + x;
+
+x = x + y;
+writeIt "x + y = " + x;
