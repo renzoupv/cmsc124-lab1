@@ -1,0 +1,119 @@
+# ========================================
+# ILLONGGO GODS Prime Number Generator
+# ========================================
+# This program demonstrates:
+# - Functions and recursion
+# - Nested loops
+# - Conditional logic
+# - Mathematical operations
+# ========================================
+
+# Function to check if a number is prime
+DEKLARAR isPrime(num) -
+    # Numbers less than 2 are not prime
+    kung num mas_gamay 2 -
+        ibalik atik.
+    --
+
+    # Check if number is 2 (only even prime)
+    kung num parehos 2 -
+        ibalik korik.
+    --
+
+    # Check if number is even
+    kung (num kambyo 2) parehos 0 -
+        ibalik atik.
+    --
+
+    # Check odd divisors up to square root
+    basi divisor ituon_sa 3.
+    samtang (divisor padamo divisor) gamay_ukon_pareho num -
+        kung (num kambyo divisor) parehos 0 -
+            ibalik atik.
+        --
+        divisor ituon_sa divisor dugang 2.
+    --
+
+    ibalik korik.
+--
+
+# Function to find nth prime number
+DEKLARAR findNthPrime(n) -
+    kung n parehos 1 -
+        ibalik 2.
+    --
+
+    basi count ituon_sa 1.
+    basi candidate ituon_sa 3.
+
+    samtang count mas_gamay n -
+        kung isPrime(candidate) -
+            count ituon_sa count dugang 1.
+            kung count parehos n -
+                ibalik candidate.
+            --
+        --
+        candidate ituon_sa candidate dugang 2.
+    --
+
+    ibalik candidate.
+--
+
+# Function to generate first N primes
+DEKLARAR generatePrimes(limit) -
+    sulat tingob("First ", tingob(limit, " prime numbers:")).
+    sulat "---".
+
+    kada basi i ituon_sa 1, samtang i gamay_ukon_pareho limit, i ituon_sa i dugang 1 -
+        basi prime ituon_sa findNthPrime(i).
+        sulat tingob(tingob("Prime #", tingob(i, ": ")), prime).
+    --
+--
+
+# Function to count primes in a range
+DEKLARAR countPrimesInRange(start, end) -
+    basi count ituon_sa 0.
+    basi current ituon_sa start.
+
+    samtang current gamay_ukon_pareho end -
+        kung isPrime(current) -
+            count ituon_sa count dugang 1.
+        --
+        current ituon_sa current dugang 1.
+    --
+
+    ibalik count.
+--
+
+# ========================================
+# MAIN PROGRAM
+# ========================================
+
+sulat "=================================".
+sulat "ILLONGGO GODS Prime Number Tool".
+sulat "=================================".
+
+# Generate first 15 prime numbers
+generatePrimes(15).
+
+# Find specific prime numbers
+sulat "---".
+sulat "Finding specific primes:".
+sulat tingob("10th prime: ", findNthPrime(10)).
+sulat tingob("25th prime: ", findNthPrime(25)).
+sulat tingob("50th prime: ", findNthPrime(50)).
+
+# Count primes in range
+sulat "---".
+sulat "Prime number statistics:".
+basi range1 ituon_sa countPrimesInRange(1, 100).
+basi range2 ituon_sa countPrimesInRange(100, 200).
+basi range3 ituon_sa countPrimesInRange(1, 1000).
+
+sulat tingob("Primes from 1-100: ", range1).
+sulat tingob("Primes from 100-200: ", range2).
+sulat tingob("Primes from 1-1000: ", range3).
+
+sulat "=================================".
+sulat "Ayuz ah".
+sulat "=================================".

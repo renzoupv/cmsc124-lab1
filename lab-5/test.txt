@@ -1,0 +1,35 @@
+# Example for-loop code
+
+# Corrected For-loop
+kada basi i ituon_sa 0, samtang i mas_gamay 5, i ituon_sa i dugang 1 -
+    sulat "togs".
+--
+
+# While-loop (needs boolean condition)
+basi x ituon_sa 5.
+samtang x mas_dako 0 -
+    sulat x.
+    x ituon_sa x buhin 1.
+--
+
+# Function
+DEKLARAR add(num1, num2) -
+    ibalik num1 dugang num2.
+--
+
+# Example 1: String length with kalabaon
+basi message ituon_sa "Kamusta ka?".
+basi len ituon_sa kalabaon(message).
+sulat len.
+
+# Example 2: String concatenation with tingob
+basi first ituon_sa "Maayong ".
+basi second ituon_sa "adlaw!".
+basi greeting ituon_sa tingob(first, second).
+sulat greeting.
+
+# Example 3: Combine both functions
+basi name ituon_sa "Juan".
+basi full ituon_sa tingob("Hello, ", name).
+sulat full.
+sulat kalabaon(full).

@@ -1,0 +1,12 @@
+# Recursive Fibonacci implementation
+DEKLARAR fibonacci(n) -
+    kung n gamay_ukon_pareho 1 -
+        ibalik n.
+    --
+    ibalik fibonacci(n buhin 1) dugang fibonacci(n buhin 2).
+--
+
+# Print first 15 Fibonacci numbers
+kada basi i ituon_sa 0, samtang i mas_gamay 15, i ituon_sa i dugang 1 -
+    sulat tingob(tingob(tingob("fib(", i), ") = "), fibonacci(i)).
+--
