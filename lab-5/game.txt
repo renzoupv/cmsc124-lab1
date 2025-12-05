@@ -1,0 +1,287 @@
+// ═══════════════════════════════════════════════════════════════════════
+// TACTICAL SHOOTER DSL - LANGUAGE SHOWCASE
+// Demonstrates all major features of the TacShooter configuration language
+// ═══════════════════════════════════════════════════════════════════════
+
+GAME TacticalShowcase [
+    // Global game configuration
+    config [
+        tick_rate :: 128
+        movement_speed :: 5.5
+        jump_height :: 2.0
+    ]
+
+    // ═══════════════════════════════════════════════════════════════════
+    // AGENTS - Unique characters with abilities
+    // ═══════════════════════════════════════════════════════════════════
+
+    AGENTS [
+        // Entry fragger with mobility and offensive abilities
+        AGENT Striker [
+            @role :: OFFENSIVE
+
+            stats [
+                health :: 100
+                armor :: 0
+                speed :: 5.5
+            ]
+
+            ABILITIES [
+                // Dash ability - demonstrates simple behavior pipeline
+                ABILITY Dash [
+                    @MOBILITY
+                    cooldown :: 8s
+                    charges :: 2
+                    duration :: 0.4s
+
+                    CAST => move -> SELF (distance :: 12, speed :: 30)
+                ]
+
+                // Explosive ability - demonstrates multi-step pipeline
+                ABILITY Grenade [
+                    @OFFENSIVE
+                    @AOE
+                    cooldown :: 30s
+                    charges :: 1
+                    damage :: 75
+
+                    CAST => throw -> ENEMY (speed :: 25, arc :: high) =>
+                            explode -> ALL (radius :: 6, delay :: 2s) =>
+                            damage -> ENEMY (amount :: 75)
+
+                    ON_KILL => grant -> SELF (buff :: DamageBoost, duration :: 8s)
+                ]
+            ]
+        ]
+
+        // Support character with healing and defensive abilities
+        AGENT Medic [
+            @role :: SUPPORT
+
+            stats [
+                health :: 100
+                armor :: 50
+                speed :: 5.0
+            ]
+
+            ABILITIES [
+                // Healing ability - demonstrates ALLY targeting
+                ABILITY HealBeam [
+                    @SUPPORT
+                    cooldown :: 20s
+                    charges :: 2
+                    heal_amount :: 50
+
+                    CAST => heal -> ALLY (amount :: 50, range :: 15)
+                ]
+
+                // Shield ability - demonstrates WITH syntax
+                ABILITY Shield [
+                    @DEFENSIVE
+                    cooldown :: 45s
+                    charges :: 1
+
+                    CAST => deploy -> ALLY (type :: barrier) with [
+                        health :: 500
+                        duration :: 10s
+                        blocks_bullets :: yes
+                    ]
+                ]
+            ]
+        ]
+
+        // Controller with area denial
+        AGENT Controller [
+            @role :: CONTROL
+
+            stats [
+                health :: 100
+                armor :: 0
+                speed :: 5.0
+            ]
+
+            ABILITIES [
+                // Smoke ability - demonstrates ALL targeting
+                ABILITY Smoke [
+                    @UTILITY
+                    @AOE
+                    cooldown :: 30s
+                    charges :: 3
+
+                    CAST => deploy -> ALL (type :: smoke, radius :: 7, duration :: 12s)
+                ]
+
+                // Slow field - demonstrates status effect application
+                ABILITY SlowField [
+                    @CONTROL
+                    @AOE
+                    cooldown :: 35s
+
+                    CAST => create -> ALL (type :: field, radius :: 8) =>
+                            apply -> ENEMY with [
+                                effect :: Slowed
+                                duration :: 5s
+                            ]
+                ]
+            ]
+        ]
+    ]
+
+    // ═══════════════════════════════════════════════════════════════════
+    // WEAPONS - Arsenal with damage falloff
+    // ═══════════════════════════════════════════════════════════════════
+
+    WEAPONS [
+        WEAPON Rifle [
+            @category :: PRIMARY
+            damage :: 40
+            fire_rate :: 600
+            magazine_size :: 30
+            reload_time :: 2.5s
+            falloff [
+                entries :: [[0, 40], [30, 40], [50, 25]]
+            ]
+        ]
+
+        WEAPON SMG [
+            @category :: PRIMARY
+            damage :: 22
+            fire_rate :: 900
+            magazine_size :: 25
+            reload_time :: 1.8s
+            falloff [
+                entries :: [[0, 22], [10, 22], [25, 12]]
+            ]
+        ]
+
+        WEAPON Sniper [
+            @category :: PRIMARY
+            damage :: 150
+            fire_rate :: 50
+            magazine_size :: 5
+            reload_time :: 3.5s
+            falloff [
+                entries :: [[0, 150], [50, 150], [100, 150]]
+            ]
+        ]
+
+        WEAPON Pistol [
+            @category :: SECONDARY
+            damage :: 30
+            fire_rate :: 300
+            magazine_size :: 12
+            reload_time :: 1.2s
+            falloff [
+                entries :: [[0, 30], [20, 30], [35, 18]]
+            ]
+        ]
+    ]
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MAP - Arena layout
+    // ═══════════════════════════════════════════════════════════════════
+
+    MAP Arena [
+        TEAMS [
+            TEAM Attackers [
+                spawn :: [100, 50, 5]
+                color :: red
+            ]
+            TEAM Defenders [
+                spawn :: [10, 50, 5]
+                color :: blue
+            ]
+        ]
+
+        SITES [
+            SITE A [
+                location :: [25, 35, 0]
+                plant_zone :: [6, 6]
+            ]
+            SITE B [
+                location :: [75, 65, 0]
+                plant_zone :: [6, 6]
+            ]
+        ]
+
+        callouts :: [SpawnA, LongA, ShortA, Mid, ConnectorA, SiteA,
+                     ConnectorB, SiteB, LongB, ShortB, SpawnB]
+    ]
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ECONOMY - Credit system
+    // ═══════════════════════════════════════════════════════════════════
+
+    ECONOMY [
+        starting_credits :: 800
+        round_loss_bonus :: 1900
+        round_win_bonus :: 3000
+        kill_reward :: 200
+        death_penalty :: 0
+        max_loss_streak :: 5
+    ]
+
+    // ═══════════════════════════════════════════════════════════════════
+    // STATUS EFFECTS - Buffs and debuffs with event handlers
+    // ═══════════════════════════════════════════════════════════════════
+
+    STATUS_EFFECTS [
+        EFFECT Slowed [
+            @DEBUFF
+            @CONTROL
+            duration :: 5s
+            slow_amount :: 50%
+
+            ON_APPLY => modify -> SELF (speed :: -50%)
+            ON_EXPIRE => reset -> SELF (speed :: 0%)
+        ]
+
+        EFFECT DamageBoost [
+            @BUFF
+            @OFFENSIVE
+            duration :: 8s
+            damage_multiplier :: 25%
+
+            ON_APPLY => modify -> SELF (damage :: 25%)
+            ON_TICK => visual -> SELF (effect :: power_aura)
+            ON_EXPIRE => reset -> SELF (damage :: 0%)
+        ]
+
+        EFFECT Burning [
+            @DEBUFF
+            @DAMAGE
+            duration :: 4s
+            tick_rate :: 1s
+            damage_per_tick :: 15
+
+            ON_APPLY => visual -> SELF (effect :: fire_overlay)
+            ON_TICK => damage -> SELF (amount :: 15, type :: fire)
+            ON_EXPIRE => clear -> SELF (effect :: fire_overlay)
+        ]
+
+        EFFECT Shield [
+            @BUFF
+            @DEFENSIVE
+            duration :: 10s
+            absorption :: 100
+
+            ON_APPLY => grant -> SELF (shield :: 100, decay :: no)
+            ON_TICK => visual -> SELF (effect :: shield_glow)
+            ON_EXPIRE => remove -> SELF (shield :: all)
+        ]
+    ]
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MATCH - Game rules
+    // ═══════════════════════════════════════════════════════════════════
+
+    MATCH [
+        rounds_to_win :: 13
+        round_time :: 100s
+        overtime_enabled :: yes
+        overtime_rounds :: 3
+        buy_time :: 30s
+        plant_time :: 4s
+        defuse_time :: 7s
+    ]
+]

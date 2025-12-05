@@ -1,3 +1,5 @@
+import TokenType.*
+
 class Scanner(private val source: String) {
     private val tokens = mutableListOf<Token>()
     private var start = 0
@@ -9,72 +11,125 @@ class Scanner(private val source: String) {
             start = current
             scanToken()
         }
-        tokens.add(Token(TokenType.EOF, "", null, line))
+        tokens.add(Token(EOF, "", null, line))
         return tokens
     }
 
-    private fun isAtEnd() = current >= source.length
-
     private fun scanToken() {
-        val c = advance()
-        when (c) {
-            '(' -> addToken(TokenType.LEFT_PAREN)
-            ')' -> addToken(TokenType.RIGHT_PAREN)
+        when (val c = advance()) {
+            // Lox characters
+            '(' -> addToken(LEFT_PAREN)
+            ')' -> addToken(RIGHT_PAREN)
+            '{' -> addToken(LEFT_BRACE)
+            '}' -> addToken(RIGHT_BRACE)
+            ',' -> addToken(COMMA)
+            '.' -> addToken(DOT)
+            ';' -> addToken(SEMICOLON)
+            '*' -> addToken(STAR)
+
+            // TacShooter DSL characters
+            '[' -> addToken(LEFT_BRACKET)
+            ']' -> addToken(RIGHT_BRACKET)
+            '@' -> addToken(AT)
+
+            // Shared operators
+            '+' -> addToken(PLUS)
             '-' -> {
-                if (match('-')) {  // '--' closes blocks
-                    addToken(TokenType.RIGHT_BRACE)
-                } else {  // '-' opens blocks
-                    addToken(TokenType.LEFT_BRACE)
+                if (match('>')) {
+                    addToken(RIGHT_ARROW) // DSL: ->
+                } else if (peek().isDigit()) {
+                    // Negative number: -50, -50%, -5s
+                    number()
+                } else {
+                    addToken(MINUS)
                 }
             }
-            '.' -> addToken(TokenType.SEMICOLON)   // Dot terminates staments
-            ',' -> addToken(TokenType.COMMA)
-            '+' -> addToken(TokenType.PLUS)
-            ';' -> addToken(TokenType.SEMICOLON)
-            '*' -> addToken(TokenType.STAR)
-            '%' -> addToken(TokenType.MODULO) // Support % symbol just in case
 
-            // Logic not using keywords
-            '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
-            '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
-            '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
-            '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
+            '!' -> addToken(if (match('=')) BANG_EQUAL else BANG)
 
-            // Comments (#) and Division (/)
+            '=' -> {
+                if (match('=')) {
+                    addToken(EQUAL_EQUAL)
+                } else if (match('>')) {
+                    addToken(ARROW) // DSL: =>
+                } else {
+                    addToken(EQUAL)
+                }
+            }
+
+            '<' -> addToken(if (match('=')) LESS_EQUAL else LESS)
+            '>' -> addToken(if (match('=')) GREATER_EQUAL else GREATER)
+
+            ':' -> {
+                if (match(':')) {
+                    addToken(DOUBLE_COLON) // DSL: ::
+                } else {
+                    error("Unexpected character ':'. Did you mean '::'?")
+                }
+            }
+
             '/' -> {
                 if (match('/')) {
+                    // Comment until end of line
                     while (peek() != '\n' && !isAtEnd()) advance()
-                } else if (match('*')) {
-                    while (peek() != '*' || peekNext() != '/') {
-                        if (peek() == '\n') line++
-                        if (isAtEnd()) return
-                        advance()
-                    }
-                    advance(); advance()
                 } else {
-                    addToken(TokenType.SLASH)
+                    addToken(SLASH)
                 }
             }
-            '#' -> { // KwentoLang Comments
+
+            // ✅ ADD HASH COMMENT SUPPORT
+            '#' -> {
+                // Comment until end of line (Python/Shell style)
                 while (peek() != '\n' && !isAtEnd()) advance()
             }
 
-            ' ', '\r', '\t' -> { }
+            ' ', '\r', '\t' -> {} // Ignore whitespace
             '\n' -> line++
             '"' -> string()
+
             else -> {
-                if (isDigit(c)) number()
-                else if (isAlpha(c)) identifier()
-                else println("[Line $line] Error: Unexpected character: $c")
+                when {
+                    c.isDigit() -> number()
+                    c.isLetter() || c == '_' -> identifier()
+                    else -> error("Unexpected character: $c")
+                }
             }
         }
     }
 
     private fun identifier() {
-        while (isAlphaNumeric(peek())) advance()
+        while (peek().isLetterOrDigit() || peek() == '_') advance()
         val text = source.substring(start, current)
-        val type = keywords[text] ?: TokenType.IDENTIFIER
+        val type = keywords[text] ?: IDENTIFIER
         addToken(type)
+    }
+
+    private fun number() {
+        while (peek().isDigit()) advance()
+
+        // Look for decimal part
+        if (peek() == '.' && peekNext().isDigit()) {
+            advance() // consume '.'
+            while (peek().isDigit()) advance()
+        }
+
+        // Check for duration suffix (DSL)
+        if (peek() == 's' && !peekNext().isLetterOrDigit()) {
+            advance()
+            val value = source.substring(start, current - 1).toDouble()
+            addToken(DURATION, value)
+            return
+        }
+
+        // Check for percentage suffix (DSL)
+        if (peek() == '%') {
+            advance()
+            val value = source.substring(start, current - 1).toDouble()
+            addToken(PERCENTAGE, value)
+            return
+        }
+
+        addToken(NUMBER, source.substring(start, current).toDouble())
     }
 
     private fun string() {
@@ -82,36 +137,35 @@ class Scanner(private val source: String) {
             if (peek() == '\n') line++
             advance()
         }
+
         if (isAtEnd()) {
-            println("[Line $line] Error: Unterminated string.")
+            error("Unterminated string")
             return
         }
-        advance()
+
+        advance() // closing "
         val value = source.substring(start + 1, current - 1)
-        addToken(TokenType.STRING, value)
+        addToken(STRING, value)
     }
 
-    private fun number() {
-        while (isDigit(peek())) advance()
-        if (peek() == '.' && isDigit(peekNext())) {
-            advance()
-            while (isDigit(peek())) advance()
-        }
-        addToken(TokenType.NUMBER, source.substring(start, current).toDouble())
-    }
-
-    private fun advance() = source[current++]
-    private fun peek() = if (isAtEnd()) '\u0000' else source[current]
-    private fun peekNext() = if (current + 1 >= source.length) '\u0000' else source[current + 1]
     private fun match(expected: Char): Boolean {
-        if (isAtEnd() || source[current] != expected) return false
+        if (isAtEnd()) return false
+        if (source[current] != expected) return false
         current++
         return true
     }
-    private fun isDigit(c: Char) = c in '0'..'9'
-    private fun isAlpha(c: Char) = c in 'a'..'z' || c in 'A'..'Z' || c == '_'
-    private fun isAlphaNumeric(c: Char) = isAlpha(c) || isDigit(c)
+
+    private fun peek() = if (isAtEnd()) '\u0000' else source[current]
+    private fun peekNext() = if (current + 1 >= source.length) '\u0000' else source[current + 1]
+    private fun isAtEnd() = current >= source.length
+    private fun advance() = source[current++]
+
     private fun addToken(type: TokenType, literal: Any? = null) {
-        tokens.add(Token(type, source.substring(start, current), literal, line))
+        val text = source.substring(start, current)
+        tokens.add(Token(type, text, literal, line))
+    }
+
+    private fun error(message: String) {
+        println("[Line $line] Error: $message")
     }
 }

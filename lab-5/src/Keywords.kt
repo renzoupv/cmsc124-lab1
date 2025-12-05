@@ -1,38 +1,77 @@
+import TokenType.*
+
 val keywords = mapOf(
-    // Control Flow
-    "DEKLARAR" to TokenType.FUN,
-    "basi" to TokenType.VAR,
-    "sulat" to TokenType.PRINT,
-    "kung" to TokenType.IF,
-    "kung_indi" to TokenType.ELSE,
-    "samtang" to TokenType.WHILE,
-    "kada" to TokenType.FOR,
-    "balik" to TokenType.RETURN,
-    "ibalik" to TokenType.RETURN,
+    // ========== LOX KEYWORDS ==========
+    "and" to AND,
+    "class" to CLASS,
+    "else" to ELSE,
+    "false" to FALSE,
+    "fun" to FUN,
+    "for" to FOR,
+    "if" to IF,
+    "nil" to NIL,
+    "or" to OR,
+    "print" to PRINT,
+    "return" to RETURN,
+    "super" to SUPER,
+    "this" to THIS,
+    "true" to TRUE,
+    "var" to VAR,
+    "while" to WHILE,
 
-    // Booleans & Logic
-    "korik" to TokenType.TRUE,
-    "atik" to TokenType.FALSE,
-    "waay" to TokenType.NIL,
-    "kag" to TokenType.AND,
-    "ukon" to TokenType.OR,
+    // ========== TACSHOOTER DSL KEYWORDS ==========
+    "GAME" to GAME,
+    "AGENTS" to AGENTS,
+    "AGENT" to AGENT,
+    "ABILITIES" to ABILITIES,
+    "ABILITY" to ABILITY,
+    "WEAPONS" to WEAPONS,
+    "WEAPON" to WEAPON,
+    "MAP" to MAP,
+    "SITES" to SITES,
+    "SITE" to SITE,
+    "TEAMS" to TEAMS,
+    "TEAM" to TEAM,
+    "ECONOMY" to ECONOMY,
+    "STATUS_EFFECTS" to STATUS_EFFECTS,
+    "EFFECT" to EFFECT,
+    "MATCH" to MATCH,
+    "TIMING" to TIMING,
+    "OBJECTIVE" to OBJECTIVE,
+    "BONUSES" to BONUSES,
+    "ARMOR" to ARMOR,
+    "DAMAGE" to DAMAGE,
+    "CAST" to CAST,
+    "ON_KILL" to ON_KILL,
+    "ON_APPLY" to ON_APPLY,
+    "ON_TICK" to ON_TICK,
+    "ON_EXPIRE" to ON_EXPIRE,
 
-    // Arithmetic Operators (Mapped to TokenTypes)
-    "dugang" to TokenType.PLUS,       // +
-    "buhin" to TokenType.MINUS,       // -
-    "padamo" to TokenType.STAR,       // *
-    "dibaydibay" to TokenType.SLASH,  // /
-    "kambyo" to TokenType.MODULO,     // %
+    "stats" to STATS,
+    "config" to CONFIG,
+    "callouts" to CALLOUTS,
+    "entries" to ENTRIES,
+    "falloff" to FALLOFF,
 
-    // Comparison Operators
-    "mas_dako" to TokenType.GREATER,          // >
-    "mas_gamay" to TokenType.LESS,            // <
-    "dako_ukon_pareho" to TokenType.GREATER_EQUAL, // >=
-    "gamay_ukon_pareho" to TokenType.LESS_EQUAL,   // <=
-    "parehos" to TokenType.EQUAL_EQUAL,       // ==
-    "lain" to TokenType.BANG_EQUAL,           // !=
-    "indi" to TokenType.BANG,                 // !
+    "AOE" to AOE,
+    "SINGLE_TARGET" to SINGLE_TARGET,
+    "MOBILITY" to MOBILITY,
+    "OFFENSIVE" to OFFENSIVE,
+    "DEFENSIVE" to DEFENSIVE,
+    "UTILITY" to UTILITY,
+    "SUPPORT" to SUPPORT,
+    "CONTROL" to CONTROL,
+    "BUFF" to BUFF,
+    "DEBUFF" to DEBUFF,
+    "NEUTRAL" to NEUTRAL,
+    "PASSIVE" to PASSIVE,
 
-    // Assignment
-    "ituon_sa" to TokenType.EQUAL             // =
+    "ENEMY" to ENEMY,
+    "ALLY" to ALLY,
+    "SELF" to SELF,
+    "ALL" to ALL,
+
+    "yes" to YES,
+    "no" to NO,
+    "with" to WITH
 )
