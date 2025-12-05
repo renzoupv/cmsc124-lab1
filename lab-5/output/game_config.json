@@ -1,0 +1,662 @@
+{
+  "game_name": "TacticalShowcase",
+  "config": {
+    "tick_rate": 128.0,
+    "movement_speed": 5.5,
+    "jump_height": 2.0
+  },
+  "agents": [
+    {
+      "name": "Striker",
+      "decorators": [
+        "role=OFFENSIVE"
+      ],
+      "stats": {
+        "health": 100.0,
+        "armor": 0.0,
+        "speed": 5.5
+      },
+      "abilities": [
+        {
+          "name": "Dash",
+          "decorators": [
+            "MOBILITY"
+          ],
+          "properties": {
+            "cooldown": {
+              "value": 8.0,
+              "unit": "seconds"
+            },
+            "charges": 2.0,
+            "duration": {
+              "value": 0.4,
+              "unit": "seconds"
+            }
+          },
+          "cast": [
+            {
+              "action": "move",
+              "target": "SELF",
+              "parameters": {
+                "distance": 12.0,
+                "speed": 30.0
+              }
+            }
+          ]
+        },
+        {
+          "name": "Grenade",
+          "decorators": [
+            "OFFENSIVE",
+            "AOE"
+          ],
+          "properties": {
+            "cooldown": {
+              "value": 30.0,
+              "unit": "seconds"
+            },
+            "charges": 1.0,
+            "damage": 75.0
+          },
+          "cast": [
+            {
+              "action": "throw",
+              "target": "ENEMY",
+              "parameters": {
+                "speed": 25.0,
+                "arc": "high"
+              }
+            },
+            {
+              "action": "explode",
+              "target": "ALL",
+              "parameters": {
+                "radius": 6.0,
+                "delay": {
+                  "value": 2.0,
+                  "unit": "seconds"
+                }
+              }
+            },
+            {
+              "action": "damage",
+              "target": "ENEMY",
+              "parameters": {
+                "amount": 75.0
+              }
+            }
+          ],
+          "events": {
+            "ON_KILL": [
+              {
+                "action": "grant",
+                "target": "SELF",
+                "parameters": {
+                  "buff": "DamageBoost",
+                  "duration": {
+                    "value": 8.0,
+                    "unit": "seconds"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medic",
+      "decorators": [
+        "role=SUPPORT"
+      ],
+      "stats": {
+        "health": 100.0,
+        "armor": 50.0,
+        "speed": 5.0
+      },
+      "abilities": [
+        {
+          "name": "HealBeam",
+          "decorators": [
+            "SUPPORT"
+          ],
+          "properties": {
+            "cooldown": {
+              "value": 20.0,
+              "unit": "seconds"
+            },
+            "charges": 2.0,
+            "heal_amount": 50.0
+          },
+          "cast": [
+            {
+              "action": "heal",
+              "target": "ALLY",
+              "parameters": {
+                "amount": 50.0,
+                "range": 15.0
+              }
+            }
+          ]
+        },
+        {
+          "name": "Shield",
+          "decorators": [
+            "DEFENSIVE"
+          ],
+          "properties": {
+            "cooldown": {
+              "value": 45.0,
+              "unit": "seconds"
+            },
+            "charges": 1.0
+          },
+          "cast": [
+            {
+              "action": "deploy",
+              "target": "ALLY",
+              "parameters": {
+                "type": "barrier",
+                "health": 500.0,
+                "duration": {
+                  "value": 10.0,
+                  "unit": "seconds"
+                },
+                "blocks_bullets": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Controller",
+      "decorators": [
+        "role=CONTROL"
+      ],
+      "stats": {
+        "health": 100.0,
+        "armor": 0.0,
+        "speed": 5.0
+      },
+      "abilities": [
+        {
+          "name": "Smoke",
+          "decorators": [
+            "UTILITY",
+            "AOE"
+          ],
+          "properties": {
+            "cooldown": {
+              "value": 30.0,
+              "unit": "seconds"
+            },
+            "charges": 3.0
+          },
+          "cast": [
+            {
+              "action": "deploy",
+              "target": "ALL",
+              "parameters": {
+                "type": "smoke",
+                "radius": 7.0,
+                "duration": {
+                  "value": 12.0,
+                  "unit": "seconds"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "SlowField",
+          "decorators": [
+            "CONTROL",
+            "AOE"
+          ],
+          "properties": {
+            "cooldown": {
+              "value": 35.0,
+              "unit": "seconds"
+            }
+          },
+          "cast": [
+            {
+              "action": "create",
+              "target": "ALL",
+              "parameters": {
+                "type": "field",
+                "radius": 8.0
+              }
+            },
+            {
+              "action": "apply",
+              "target": "ENEMY",
+              "parameters": {
+                "effect": "Slowed",
+                "duration": {
+                  "value": 5.0,
+                  "unit": "seconds"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "weapons": [
+    {
+      "name": "Rifle",
+      "decorators": [
+        "category=PRIMARY"
+      ],
+      "properties": {
+        "damage": 40.0,
+        "fire_rate": 600.0,
+        "magazine_size": 30.0,
+        "reload_time": {
+          "value": 2.5,
+          "unit": "seconds"
+        },
+        "falloff": {
+          "entries": [
+            [
+              0.0,
+              40.0
+            ],
+            [
+              30.0,
+              40.0
+            ],
+            [
+              50.0,
+              25.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "SMG",
+      "decorators": [
+        "category=PRIMARY"
+      ],
+      "properties": {
+        "damage": 22.0,
+        "fire_rate": 900.0,
+        "magazine_size": 25.0,
+        "reload_time": {
+          "value": 1.8,
+          "unit": "seconds"
+        },
+        "falloff": {
+          "entries": [
+            [
+              0.0,
+              22.0
+            ],
+            [
+              10.0,
+              22.0
+            ],
+            [
+              25.0,
+              12.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sniper",
+      "decorators": [
+        "category=PRIMARY"
+      ],
+      "properties": {
+        "damage": 150.0,
+        "fire_rate": 50.0,
+        "magazine_size": 5.0,
+        "reload_time": {
+          "value": 3.5,
+          "unit": "seconds"
+        },
+        "falloff": {
+          "entries": [
+            [
+              0.0,
+              150.0
+            ],
+            [
+              50.0,
+              150.0
+            ],
+            [
+              100.0,
+              150.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "Pistol",
+      "decorators": [
+        "category=SECONDARY"
+      ],
+      "properties": {
+        "damage": 30.0,
+        "fire_rate": 300.0,
+        "magazine_size": 12.0,
+        "reload_time": {
+          "value": 1.2,
+          "unit": "seconds"
+        },
+        "falloff": {
+          "entries": [
+            [
+              0.0,
+              30.0
+            ],
+            [
+              20.0,
+              30.0
+            ],
+            [
+              35.0,
+              18.0
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "map": {
+    "name": "Arena",
+    "teams": [
+      {
+        "name": "Attackers",
+        "properties": {
+          "spawn": [
+            100.0,
+            50.0,
+            5.0
+          ],
+          "color": "red"
+        }
+      },
+      {
+        "name": "Defenders",
+        "properties": {
+          "spawn": [
+            10.0,
+            50.0,
+            5.0
+          ],
+          "color": "blue"
+        }
+      }
+    ],
+    "sites": [
+      {
+        "name": "A",
+        "properties": {
+          "location": [
+            25.0,
+            35.0,
+            0.0
+          ],
+          "plant_zone": [
+            6.0,
+            6.0
+          ]
+        }
+      },
+      {
+        "name": "B",
+        "properties": {
+          "location": [
+            75.0,
+            65.0,
+            0.0
+          ],
+          "plant_zone": [
+            6.0,
+            6.0
+          ]
+        }
+      }
+    ],
+    "callouts": [
+      "SpawnA",
+      "LongA",
+      "ShortA",
+      "Mid",
+      "ConnectorA",
+      "SiteA",
+      "ConnectorB",
+      "SiteB",
+      "LongB",
+      "ShortB",
+      "SpawnB"
+    ]
+  },
+  "economy": {
+    "starting_credits": 800.0,
+    "round_loss_bonus": 1900.0,
+    "round_win_bonus": 3000.0,
+    "kill_reward": 200.0,
+    "death_penalty": 0.0,
+    "max_loss_streak": 5.0
+  },
+  "status_effects": [
+    {
+      "name": "Slowed",
+      "decorators": [
+        "DEBUFF",
+        "CONTROL"
+      ],
+      "properties": {
+        "duration": {
+          "value": 5.0,
+          "unit": "seconds"
+        },
+        "slow_amount": {
+          "value": 50.0,
+          "unit": "percent"
+        }
+      },
+      "events": {
+        "ON_APPLY": [
+          {
+            "action": "modify",
+            "target": "SELF",
+            "parameters": {
+              "speed": {
+                "value": -50.0,
+                "unit": "percent"
+              }
+            }
+          }
+        ],
+        "ON_EXPIRE": [
+          {
+            "action": "reset",
+            "target": "SELF",
+            "parameters": {
+              "speed": {
+                "value": 0.0,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "DamageBoost",
+      "decorators": [
+        "BUFF",
+        "OFFENSIVE"
+      ],
+      "properties": {
+        "duration": {
+          "value": 8.0,
+          "unit": "seconds"
+        },
+        "damage_multiplier": {
+          "value": 25.0,
+          "unit": "percent"
+        }
+      },
+      "events": {
+        "ON_APPLY": [
+          {
+            "action": "modify",
+            "target": "SELF",
+            "parameters": {
+              "damage": {
+                "value": 25.0,
+                "unit": "percent"
+              }
+            }
+          }
+        ],
+        "ON_TICK": [
+          {
+            "action": "visual",
+            "target": "SELF",
+            "parameters": {
+              "effect": "power_aura"
+            }
+          }
+        ],
+        "ON_EXPIRE": [
+          {
+            "action": "reset",
+            "target": "SELF",
+            "parameters": {
+              "damage": {
+                "value": 0.0,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Burning",
+      "decorators": [
+        "DEBUFF",
+        "DAMAGE"
+      ],
+      "properties": {
+        "duration": {
+          "value": 4.0,
+          "unit": "seconds"
+        },
+        "tick_rate": {
+          "value": 1.0,
+          "unit": "seconds"
+        },
+        "damage_per_tick": 15.0
+      },
+      "events": {
+        "ON_APPLY": [
+          {
+            "action": "visual",
+            "target": "SELF",
+            "parameters": {
+              "effect": "fire_overlay"
+            }
+          }
+        ],
+        "ON_TICK": [
+          {
+            "action": "damage",
+            "target": "SELF",
+            "parameters": {
+              "amount": 15.0,
+              "type": "fire"
+            }
+          }
+        ],
+        "ON_EXPIRE": [
+          {
+            "action": "clear",
+            "target": "SELF",
+            "parameters": {
+              "effect": "fire_overlay"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Shield",
+      "decorators": [
+        "BUFF",
+        "DEFENSIVE"
+      ],
+      "properties": {
+        "duration": {
+          "value": 10.0,
+          "unit": "seconds"
+        },
+        "absorption": 100.0
+      },
+      "events": {
+        "ON_APPLY": [
+          {
+            "action": "grant",
+            "target": "SELF",
+            "parameters": {
+              "shield": 100.0,
+              "decay": false
+            }
+          }
+        ],
+        "ON_TICK": [
+          {
+            "action": "visual",
+            "target": "SELF",
+            "parameters": {
+              "effect": "shield_glow"
+            }
+          }
+        ],
+        "ON_EXPIRE": [
+          {
+            "action": "remove",
+            "target": "SELF",
+            "parameters": {
+              "shield": "all"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "match": {
+    "rounds_to_win": 13.0,
+    "round_time": {
+      "value": 100.0,
+      "unit": "seconds"
+    },
+    "overtime_enabled": true,
+    "overtime_rounds": 3.0,
+    "buy_time": {
+      "value": 30.0,
+      "unit": "seconds"
+    },
+    "plant_time": {
+      "value": 4.0,
+      "unit": "seconds"
+    },
+    "defuse_time": {
+      "value": 7.0,
+      "unit": "seconds"
+    }
+  }
+}

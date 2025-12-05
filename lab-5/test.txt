@@ -1,35 +1,54 @@
-# Example for-loop code
+// =============================================================================
+// SIMPLE TEST CASES
+// =============================================================================
 
-# Corrected For-loop
-kada basi i ituon_sa 0, samtang i mas_gamay 5, i ituon_sa i dugang 1 -
-    sulat "togs".
---
+print "=== Testing All Features ===";
+print "";
 
-# While-loop (needs boolean condition)
-basi x ituon_sa 5.
-samtang x mas_dako 0 -
-    sulat x.
-    x ituon_sa x buhin 1.
---
+// -----------------------------------------------------------------------------
+// Test 1: IF Statement
+// -----------------------------------------------------------------------------
+print "Test 1: IF Statement";
+var x = 10;
+if (x > 5) {
+    print "x is greater than 5";
+} else {
+    print "x is not greater than 5";
+}
+print "";
 
-# Function
-DEKLARAR add(num1, num2) -
-    ibalik num1 dugang num2.
---
 
-# Example 1: String length with kalabaon
-basi message ituon_sa "Kamusta ka?".
-basi len ituon_sa kalabaon(message).
-sulat len.
+// -----------------------------------------------------------------------------
+// Test 2: WHILE Loop
+// -----------------------------------------------------------------------------
+print "Test 2: WHILE Loop";
+var count = 0;
+while (count < 5) {
+    print count;  // ✅ Just print the number directly
+    count = count + 1;
+}
+print "";
 
-# Example 2: String concatenation with tingob
-basi first ituon_sa "Maayong ".
-basi second ituon_sa "adlaw!".
-basi greeting ituon_sa tingob(first, second).
-sulat greeting.
 
-# Example 3: Combine both functions
-basi name ituon_sa "Juan".
-basi full ituon_sa tingob("Hello, ", name).
-sulat full.
-sulat kalabaon(full).
+// -----------------------------------------------------------------------------
+// Test 3: FOR Loop
+// -----------------------------------------------------------------------------
+print "Test 3: FOR Loop";
+for (var i = 0; i < 5; i = i + 1) {
+    print i;  // ✅ Just print the number directly
+}
+print "";
+
+
+// -----------------------------------------------------------------------------
+// Test 4: String Indexing
+// -----------------------------------------------------------------------------
+print "Test 4: String Indexing";
+var string1 = "string";
+print "Before: " + string1;
+string1[1] = "k";
+print "After: " + string1;
+print "";
+
+
+print "=== All Tests Complete ===";
