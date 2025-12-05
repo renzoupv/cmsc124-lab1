@@ -1,112 +1,159 @@
-# 5v5 TacShooter DSL
+# TacShooter Configuration Language (TSCL)
 
-## Creator
+## Creators
 
 Renz de Arroz & Johann Ross Yap
 
 ## Language Overview
 
-Our project is a hybrid programming environment designed to bridge the gap between imperative game logic and declarative game configuration. It addresses the specific needs of game development by operating in two distinct modes:
+**TacShooter DSL** is a specialized domain-specific language designed to let game designers and non-programmers configure the core elements of a 5v5 tactical shooter.
 
-1.  **Lox Mode (Imperative):** A general-purpose, dynamically typed scripting language used for implementing core logic, calculations, and control flow.
-2.  **TacShooter DSL Mode (Declarative):** A Domain-Specific Language (DSL) optimized for defining tactical shooter entities (Agents, Weapons, Maps). It parses high-level configuration syntax and compiles it directly into JSON for consumption by external game engines.
+Unlike general-purpose scripting languages, TSCL is **declarative** and **data-driven**. It allows users to define complex game entities—such as Agents, Weapons, Maps, and Status Effects—using a readable syntax that compiles directly into JSON for use in game engines.
+
+**Category:** Declarative, Interpreted, Configuration
+**Typing:** Static, Strong (Domain-Specific)
+**Data Types:**
+
+| Primitive Types | DSL-Specific Types |
+| :--- | :--- |
+| 1. Number (Float/Int) | 1. Agent |
+| 2. Boolean (yes/no) | 2. Weapon |
+| 3. String | 3. Ability |
+| 4. Duration (e.g., `5s`) | 4. Team |
+| 5. Percentage (e.g., `10%`) | 5. Site |
+| 6. List (`[...]`) | 6. Map |
+| | 7. Status Effect |
 
 ## Keywords
 
-The following words are reserved and cannot be used as identifiers:
+The language reserves the following words to define structure and behavior:
 
-### Control Flow & Logic (Lox)
-* `var`: Declares a new variable.
-* `fun`: Defines a function.
-* `return`: Returns a value from a function.
-* `if`, `else`: Conditional branching.
-* `while`, `for`: Loop constructs.
-* `print`: Outputs text to the console.
-* `and`, `or`: Logical operators.
-* `true`, `false`, `nil`: Boolean and null literals.
-* `class`, `this`, `super`: Reserved for object-oriented features.
+### Structure & Entities
+| Keyword | Description |
+| :--- | :--- |
+| `GAME` | The root block for the entire game configuration. |
+| `AGENTS`, `AGENT` | Sections for defining playable characters. |
+| `WEAPONS`, `WEAPON` | Sections for defining guns and equipment. |
+| `MAP`, `SITES`, `SITE` | Definitions for the level layout and bomb sites. |
+| `TEAMS`, `TEAM` | Definitions for faction attributes (e.g., Attackers/Defenders). |
+| `STATUS_EFFECTS`, `EFFECT` | Definitions for buffs and debuffs (e.g., Flash, Stun). |
+| `MATCH`, `ECONOMY` | Global game rules and economy settings. |
 
-### Game Configuration (DSL)
-* **Structure:** `GAME`, `CONFIG`, `MATCH`, `ECONOMY`, `STATUS_EFFECTS`, `MAP`, `TEAMS`, `SITES`, `CALLOUTS`.
-* **Entities:** `AGENTS`, `AGENT`, `WEAPONS`, `WEAPON`, `ABILITIES`, `ABILITY`, `EFFECT`, `TEAM`, `SITE`.
-* **Properties:** `STATS`, `ENTRIES`, `FALLOFF`.
-* **Events:** `CAST`, `ON_KILL`, `ON_APPLY`, `ON_TICK`, `ON_EXPIRE`.
-* **Values:** `yes`, `no` (Boolean aliases), `with` (Parameter injection).
-* **Targets:** `ENEMY`, `ALLY`, `SELF`, `ALL`.
-* **Types:** `AOE`, `SINGLE_TARGET`, `MOBILITY`, `OFFENSIVE`, `DEFENSIVE`, `UTILITY`, `SUPPORT`, `CONTROL`, `BUFF`, `DEBUFF`, `NEUTRAL`, `PASSIVE`.
+### Properties & Logic
+| Keyword | Description |
+| :--- | :--- |
+| `STATS` | Block for base attributes (health, speed). |
+| `ABILITIES`, `ABILITY` | Defines a character's kit. |
+| `CAST` | Hook that triggers when an ability is used. |
+| `ON_KILL`, `ON_APPLY` | Event hooks for combat interactions. |
+| `ON_TICK`, `ON_EXPIRE` | Event hooks for time-based effects. |
+| `FALLOFF` | Block for defining weapon damage over distance. |
+| `CALLOUTS` | List of map location names. |
+
+### Values & Targets
+| Keyword | Description |
+| :--- | :--- |
+| `yes`, `no` | Boolean literals (True/False). |
+| `ENEMY`, `ALLY` | Dynamic targets relative to the caster. |
+| `SELF`, `ALL` | Specific target designators. |
+| `AOE`, `SINGLE_TARGET` | Targeting types. |
+| `OFFENSIVE`, `DEFENSIVE` | Ability archetypes. |
+| `BUFF`, `DEBUFF` | Status effect types. |
 
 ## Operators
 
-### Arithmetic & String
-* `+`: Addition (numbers) or concatenation (strings).
-* `-`: Subtraction.
-* `*`: Multiplication.
-* `/`: Division.
-
-### Comparison & Logic
-* `>`, `>=`: Greater than, Greater than or equal.
-* `<`, `<=`: Less than, Less than or equal.
-* `==`, `!=`: Equality and inequality checks.
-* `!`: Logical NOT.
-
-### Assignment & Definition
-* `=`: Variable assignment.
-* `::`: Property assignment (DSL only).
-* `@`: Decorator prefix (DSL only).
-
-### Flow & Grouping
-* `=>`: Event pipeline mapping (DSL only).
-* `->`: Action targeting (DSL only).
-* `[` `]`: Array/List initialization or Section grouping.
-* `(` `)`: Grouping expressions or function parameters.
-* `{` `}`: Block scope delimiter (Lox only).
+| Operator | Description |
+| :--- | :--- |
+| `::` | **Property Assignment**. Assigns a value to a key (e.g., `damage :: 50`). |
+| `=>` | **Event Pipeline**. Maps a trigger to a sequence of actions (e.g., `CAST => throw`). |
+| `->` | **Targeting**. Directs an action toward a specific entity (e.g., `damage -> ENEMY`). |
+| `[` `]` | **Scope/Grouping**. Encloses sections, lists, and object definitions. |
+| `@` | **Decorator**. Tags an entity with metadata (e.g., `@Duelist`). |
+| `with` | **Parameter Injection**. Passes arguments to an action. |
 
 ## Literals
 
-* **Numbers:** Double-precision floating point numbers (e.g., `123`, `10.5`).
-* **Strings:** Text enclosed in double quotes (e.g., `"Hello"`).
-* **Booleans:** `true`/`false` (Lox) or `yes`/`no` (DSL).
-* **Arrays:** Ordered lists of values enclosed in brackets (e.g., `[1, 2, 3]`).
-* **Durations:** Numeric values suffixed with 's' (e.g., `5s`). Parsed as `{value: 5.0, unit: "seconds"}`.
-* **Percentages:** Numeric values suffixed with '%' (e.g., `25%`). Parsed as `{value: 25.0, unit: "percent"}`.
+| Literal | Description |
+| :--- | :--- |
+| **Numbers** | Standard integers or floating-point values (e.g., `150`, `4.5`). |
+| **Strings** | Text enclosed in double quotes (e.g., `"Classic Rifle"`). |
+| **Booleans** | Represented by `yes` and `no` for readability. |
+| **Durations** | Numbers suffixed with `s`. Parsed as `{ val: X, unit: "seconds" }`.<br>Example: `5s`, `0.5s`. |
+| **Percentages** | Numbers suffixed with `%`. Parsed as `{ val: X, unit: "percent" }`.<br>Example: `50%`, `100%`. |
+| **Arrays** | A comma-separated list of values enclosed in brackets.<br>Example: `[ "A", "B", "C" ]`. |
 
 ## Identifiers
 
-* **Format:** Must start with a letter (`a-z`, `A-Z`) or underscore `_`. Subsequent characters can be letters, digits (`0-9`), or underscores.
-* **Case Sensitivity:** Identifiers are case-sensitive (e.g., `myVar` is different from `MyVar`).
-* **Usage:** Used for variable names, function names, DSL entity names (e.g., `Jett`), and action names.
+* **Format:** Can contain letters (`a-z`, `A-Z`) and underscores `_`.
+* **Rules:** Must not start with a digit. Case-sensitive.
+* **Usage:** Used for naming Agents, Weapons, Map Sites, and custom properties.
 
 ## Comments
 
-* **C-Style:** Starts with `//` and continues to the end of the line.
-* **Hash-Style:** Starts with `#` and continues to the end of the line (Scripting style).
-* **Nested Comments:** Not supported.
+* **Hash Style:** Comments start with `#` and continue to the end of the line.
+    * Example: `# This is a comment`
+* **Block Comments:** Not supported (simple syntax preferred).
 
 ## Syntax Style
 
-* **Lox Mode:**
-    * Statements are terminated by semicolons `;`.
-    * Blocks are delimited by curly braces `{}`.
-    * Whitespace is insignificant.
-* **DSL Mode:**
-    * Structure is hierarchical using square brackets `[]`.
-    * Properties use `key :: value` syntax.
-    * Pipelines use arrow notation `=>` and `->`.
-
-## Design Rationale
-This system splits game development into two parts: a scripting language for logic and a simple configuration tool for game data. This allows programmers to write complex code while designers safely tweak stats like damage or cooldowns using easy-to-read text. Everything saves as standard JSON files so it works with any game engine, and we added shortcuts for time and percentages to make game balancing faster and error-free.
+* **Blocks:** The language uses square brackets `[` and `]` to define hierarchy, distinguishing it from C-style languages.
+* **Assignments:** Uses double-colon `::` to clearly separate keys from values.
+* **Whitespace:** Not significant. Formatting is flexible.
 
 ## Sample Code
 
-### Lox Mode (Scripting)
-```javascript
-// Function definition
-fun calculateDamage(base, multiplier) {
-    return base * multiplier;
-}
+~~~
 
-# Array manipulation
-var scores = [10, 20, 30];
-scores[1] = 50;
+GAME ValorStrike [
+    # Global Config
+    CONFIG [ tick_rate :: 128 rounds :: 13 ]
 
-print "Final Damage: " + calculateDamage(scores[1], 1.5);
+    # Entity Definitions
+    AGENTS [
+        AGENT Jett [
+            @Duelist
+            STATS [ health :: 100 speed :: 6.5 ]
+            
+            ABILITIES [
+                ABILITY Updraft [
+                    type :: MOBILITY
+                    cooldown :: 12s
+                    charges :: 2
+                    
+                    # Behavior Pipeline
+                    CAST => jump -> SELF ( height :: 500 )
+                ]
+                ABILITY Cloudburst [
+                    type :: UTILITY
+                    duration :: 4.5s
+                    
+                    CAST => spawn_smoke -> SELF [ radius :: 300 ]
+                ]
+            ]
+        ]
+    ]
+
+    WEAPONS [
+        WEAPON Vandal [
+            cost :: 2900
+            penetration :: high
+            
+            # Nested Property Block
+            STATS [ 
+                magazine :: 25 
+                fire_rate :: 9.75 
+            ]
+            
+            # Damage Falloff Logic
+            FALLOFF [
+                range_0_30  [ head :: 160 body :: 40 legs :: 34 ]
+                range_30_50 [ head :: 160 body :: 40 legs :: 34 ]
+            ]
+        ]
+    ]
+]
+~~~
+
+#Design Rationale
+
+TSCL is built to be a safe, designer-first configuration language that prioritizes readability and ease of use over complex programming logic. By supporting domain-specific literals (like 5s for time and 10% for rates) and compiling directly to JSON, it eliminates common data entry errors and ensures that game content remains portable and engine-agnostic. This declarative approach allows non-programmers to define complex behaviors through simple pipelines without the risk of breaking core game code.
