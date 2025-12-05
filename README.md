@@ -1,89 +1,112 @@
-CONYO GODS
-Creator
-Renz Rendel De Arroz
-Johann Ross Yap
+# Unified Language System
 
-Language Overview
-[Provide a brief description of your programming language - what it's designed for, its main characteristics]
-This programming language is for high-class individuals who have low IQ, likes to hangout in starbs and borrows daddy's car.
+## Creator
 
-Keywords
-[List all reserved words that cannot be used as identifiers - include the keyword and a brief description of its purpose]
+Renz de Arroz & Johann Ross Yap
 
-1. aynd == AND
-2. klase == CLASS
-3. others == ELSE
-4. cap == FALSE
-5. para == FOR
-6. fun == FUN
-7. ifBro == IF
-8. nothing == NULL
-9. or == OR
-10. writeIt == PRINT
-11. goBack == RETURN
-12. superIdol == SUPER
-13. amoNiSir == THIS
-14. trueTrue == TRUE
-15. varbs == VAR
-16. habangsh == WHILE
+## Language Overview
 
-Operators
-[List all operators organized by category (arithmetic, comparison, logical, assignment, etc.)]
+The **Unified Language System** is a hybrid programming environment designed to bridge the gap between imperative game logic and declarative game configuration. It addresses the specific needs of game development by operating in two distinct modes:
 
-1. (
-2. )
-3. {
-4. }
-5. ,
-6. .
-7. -
-8. +
-9. ;
-10. *
-11. !
-12. =
-13. <
-14. >
-15. /
+1.  **Lox Mode (Imperative):** A general-purpose, dynamically typed scripting language used for implementing core logic, calculations, and control flow.
+2.  **TacShooter DSL Mode (Declarative):** A Domain-Specific Language (DSL) optimized for defining tactical shooter entities (Agents, Weapons, Maps). It parses high-level configuration syntax and compiles it directly into JSON for consumption by external game engines.
 
-Literals
-[Describe the format and syntax for each type of literal value (e.g., numbers, strings, characters, etc.) your language supports]
+## Keywords
 
-Standard format of common languages, nothing special.
+The following words are reserved and cannot be used as identifiers:
 
+### Control Flow & Logic (Lox)
+* `var`: Declares a new variable.
+* `fun`: Defines a function.
+* `return`: Returns a value from a function.
+* `if`, `else`: Conditional branching.
+* `while`, `for`: Loop constructs.
+* `print`: Outputs text to the console.
+* `and`, `or`: Logical operators.
+* `true`, `false`, `nil`: Boolean and null literals.
+* `class`, `this`, `super`: Reserved for object-oriented features.
 
-Identifiers
-[Define the rules for valid identifiers (variable names, function names, etc.) and whether they are case-sensitive]
+### Game Configuration (DSL)
+* **Structure:** `GAME`, `CONFIG`, `MATCH`, `ECONOMY`, `STATUS_EFFECTS`, `MAP`, `TEAMS`, `SITES`, `CALLOUTS`.
+* **Entities:** `AGENTS`, `AGENT`, `WEAPONS`, `WEAPON`, `ABILITIES`, `ABILITY`, `EFFECT`, `TEAM`, `SITE`.
+* **Properties:** `STATS`, `ENTRIES`, `FALLOFF`.
+* **Events:** `CAST`, `ON_KILL`, `ON_APPLY`, `ON_TICK`, `ON_EXPIRE`.
+* **Values:** `yes`, `no` (Boolean aliases), `with` (Parameter injection).
+* **Targets:** `ENEMY`, `ALLY`, `SELF`, `ALL`.
+* **Types:** `AOE`, `SINGLE_TARGET`, `MOBILITY`, `OFFENSIVE`, `DEFENSIVE`, `UTILITY`, `SUPPORT`, `CONTROL`, `BUFF`, `DEBUFF`, `NEUTRAL`, `PASSIVE`.
 
-Function names, class names, and variable names follow 
+## Operators
 
-Comments
-[Describe the syntax for comments and whether nested comments are supported]
+### Arithmetic & String
+* `+`: Addition (numbers) or concatenation (strings).
+* `-`: Subtraction.
+* `*`: Multiplication.
+* `/`: Division.
 
-Our syntax for comments is the same with JAVA.
+### Comparison & Logic
+* `>`, `>=`: Greater than, Greater than or equal.
+* `<`, `<=`: Less than, Less than or equal.
+* `==`, `!=`: Equality and inequality checks.
+* `!`: Logical NOT.
 
-Syntax Style
-[Describe whether whitespace is significant, how statements are terminated, and what delimiters are used for blocks and grouping]
+### Assignment & Definition
+* `=`: Variable assignment.
+* `::`: Property assignment (DSL only).
+* `@`: Decorator prefix (DSL only).
 
-In this language, whitespace such as spaces, tabs, and newlines is generally not significant and serves only to separate tokens or improve readability. Statements are explicitly terminated with a semicolon (;), ensuring clear boundaries between instructions regardless of formatting. Blocks of code are enclosed within curly braces ({ and }), while parentheses (( and )) are used to group expressions or define conditions in control structures. This structure allows the code to remain flexible in terms of layout and indentation while still maintaining strict rules for statement termination and block delimitation.
+### Flow & Grouping
+* `=>`: Event pipeline mapping (DSL only).
+* `->`: Action targeting (DSL only).
+* `[` `]`: Array/List initialization or Section grouping.
+* `(` `)`: Grouping expressions or function parameters.
+* `{` `}`: Block scope delimiter (Lox only).
 
-Sample Code
-[Provide a few examples of valid code in your language to demonstrate the syntax and features]
+## Literals
 
-~~~
-writeit("Hello World!")
+* **Numbers:** Double-precision floating point numbers (e.g., `123`, `10.5`).
+* **Strings:** Text enclosed in double quotes (e.g., `"Hello"`).
+* **Booleans:** `true`/`false` (Lox) or `yes`/`no` (DSL).
+* **Arrays:** Ordered lists of values enclosed in brackets (e.g., `[1, 2, 3]`).
+* **Durations:** Numeric values suffixed with 's' (e.g., `5s`). Parsed as `{value: 5.0, unit: "seconds"}`.
+* **Percentages:** Numeric values suffixed with '%' (e.g., `25%`). Parsed as `{value: 25.0, unit: "percent"}`.
 
-fun add() {
-  goback 1 + 1;
+## Identifiers
+
+* **Format:** Must start with a letter (`a-z`, `A-Z`) or underscore `_`. Subsequent characters can be letters, digits (`0-9`), or underscores.
+* **Case Sensitivity:** Identifiers are case-sensitive (e.g., `myVar` is different from `MyVar`).
+* **Usage:** Used for variable names, function names, DSL entity names (e.g., `Jett`), and action names.
+
+## Comments
+
+* **C-Style:** Starts with `//` and continues to the end of the line.
+* **Hash-Style:** Starts with `#` and continues to the end of the line (Scripting style).
+* **Nested Comments:** Not supported.
+
+## Syntax Style
+
+* **Lox Mode:**
+    * Statements are terminated by semicolons `;`.
+    * Blocks are delimited by curly braces `{}`.
+    * Whitespace is insignificant.
+* **DSL Mode:**
+    * Structure is hierarchical using square brackets `[]`.
+    * Properties use `key :: value` syntax.
+    * Pipelines use arrow notation `=>` and `->`.
+
+## Design Rationale
+This system splits game development into two parts: a scripting language for logic and a simple configuration tool for game data. This allows programmers to write complex code while designers safely tweak stats like damage or cooldowns using easy-to-read text. Everything saves as standard JSON files so it works with any game engine, and we added shortcuts for time and percentages to make game balancing faster and error-free.
+
+## Sample Code
+
+### Lox Mode (Scripting)
+```javascript
+// Function definition
+fun calculateDamage(base, multiplier) {
+    return base * multiplier;
 }
 
-habangsh (truetrue) {
-}
-~~~
+# Array manipulation
+var scores = [10, 20, 30];
+scores[1] = 50;
 
-Design Rationale
-[Explain the reasoning behind your design choices]
-
-We want to make an easy language for our conyo gods.
-
-
+print "Final Damage: " + calculateDamage(scores[1], 1.5);
