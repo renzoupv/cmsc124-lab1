@@ -1,4 +1,4 @@
-# Unified Language System
+# 5v5 TacShooter DSL
 
 ## Creator
 
@@ -6,7 +6,7 @@ Renz de Arroz & Johann Ross Yap
 
 ## Language Overview
 
-The **Unified Language System** is a hybrid programming environment designed to bridge the gap between imperative game logic and declarative game configuration. It addresses the specific needs of game development by operating in two distinct modes:
+Our project is a hybrid programming environment designed to bridge the gap between imperative game logic and declarative game configuration. It addresses the specific needs of game development by operating in two distinct modes:
 
 1.  **Lox Mode (Imperative):** A general-purpose, dynamically typed scripting language used for implementing core logic, calculations, and control flow.
 2.  **TacShooter DSL Mode (Declarative):** A Domain-Specific Language (DSL) optimized for defining tactical shooter entities (Agents, Weapons, Maps). It parses high-level configuration syntax and compiles it directly into JSON for consumption by external game engines.
